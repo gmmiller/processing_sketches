@@ -29,8 +29,10 @@ void draw() {
   fft.forward(song.mix);
   stroke(255, 0, 0, 128);
   //draw the spectrum as a series of vertical lines
+  //notice here the fft.getband(i) is multiplied by 4 to make it more noticable
   for (int i = 0; i < fft.specSize(); i++) {
     line(i, height-20, i, height - 20 - fft.getBand(i)*4);
+    println(fft.getBand(i));
   }
 
   //now draw the waveform
