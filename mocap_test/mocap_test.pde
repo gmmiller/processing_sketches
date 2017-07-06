@@ -39,6 +39,7 @@ void draw(){
  background(0,0,0); 
  translate(width/2, height/2, 0);
  scale(200,-200,200);
+ //change rotation and see character different ways 
  rotateY(-PI/2);
  lights();
  
