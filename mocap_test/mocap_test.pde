@@ -22,7 +22,8 @@ class Body{
 MocapServer server;
 
 void setup(){
-  size(1024, 1024, P3D);
+  size(displayWidth , displayHeight, P3D);
+  background(0,0,0);
 
   try{
     server = new MocapServer(PORT);
@@ -36,12 +37,13 @@ void setup(){
 
 
 void draw(){
- background(0,0,0); 
+ //background(0,0,0); 
  translate(width/2, height/2, 0);
- scale(200,-200,200);
+ scale(400,-400,400);
  //change rotation and see character different ways 
- rotateY(-PI/2);
+ rotateY(PI);
  lights();
+ noStroke();
  
   if (server.pose != null){
     //drawBalls(server.pose);
@@ -69,29 +71,46 @@ void drawStick(MocapPose pose){
     segment = pose.segments[Body.HEAD];
     pushMatrix();
     translate(segment.x, segment.z, segment.y);
-    
-    sphere(0.05);
+    fill(3, 245, 20);
+    //sphere(0.10);
     popMatrix();
     
     line(0, segment.x, 0, segment.z, 0, segment.y);
     
+    //right hand is red
     segment = pose.segments[Body.RIGHT_HAND];
     pushMatrix();
     translate(segment.x, segment.z, segment.y);
-    
+    fill(250,4,5);
      sphere(0.05);
     popMatrix();
     
+    //left hand is blue
     segment = pose.segments[Body.LEFT_HAND];
     pushMatrix();
     translate(segment.x, segment.z, segment.y);
-    
+     fill(0,0,245);    
      sphere(0.05);
     popMatrix();
     
+        //right foot is green
+    segment = pose.segments[Body.RIGHT_FOOT];
+    pushMatrix();
+    translate(segment.x, segment.z, segment.y);
+    fill(20,255,5);
+     sphere(0.05);
+    popMatrix();
+    
+            //;eft foot is yello
+    segment = pose.segments[Body.LEFT_FOOT];
+    pushMatrix();
+    translate(segment.x, segment.z, segment.y);
+    fill(245,245,5);
+     sphere(0.05);
+    popMatrix();
    
     
-    
+   /* 
     // draw shoulders
     stroke(255);
     strokeWeight(0.01);
@@ -127,7 +146,7 @@ void drawStick(MocapPose pose){
     drawConnection(pose, Body.RIGHT_LOWER_LEG, Body.RIGHT_FOOT);
     drawConnection(pose, Body.RIGHT_FOOT, Body.RIGHT_TOE);
     
-    
+    */
 }
 
 
