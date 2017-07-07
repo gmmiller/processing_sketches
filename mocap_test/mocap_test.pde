@@ -5,6 +5,7 @@ final int PORT = 9763;
 int TIME_INTERVAL = 1000*10;
 int lastTime = 0;
 float angle = 0;
+float angle2 = 0;
 
 class Body {
   final static  int PELVIS = 1, L5 = 2, L3 = 3, T12 = 4, T8 = 5;
@@ -49,8 +50,11 @@ void draw() {
   //rect(0,0, width, height);
   lights();
   int time = millis();
-  
-  if (time - lastTime >= TIME_INTERVAL){
+  //attempt to rotate the camera around the x axis 
+  camera(10, 10, 10, 0, 0, 0, 0, -1.0, 0);
+  //angle2 += 0.05;
+
+  if (time - lastTime >= TIME_INTERVAL) {
     drawFigure(); 
     lastTime = time;
   }
@@ -59,16 +63,16 @@ void draw() {
 void drawFigure() {
   if (server.pose != null) {
     //drawBalls(server.pose);
-    QuaternionSegment pelvis = server.pose.segments[Body.PELVIS];
 
-    camera(10, 10, 10, 0, 0, 0, 0, -1.0, 0);
+
 
 
     for (float angle = 0; angle < TWO_PI; angle += 0.05) {
+      QuaternionSegment head = server.pose.segments[Body.HEAD];
       pushMatrix();
-      translate(pelvis.x, pelvis.z, pelvis.y);
+      translate(head.x, head.z, head.y);
       rotateY(angle);
-      translate(-pelvis.x, -pelvis.z, -pelvis.y);
+      translate(-head.x, -head.z, -head.y);
       drawStick(server.pose);
       popMatrix();
     }
@@ -117,7 +121,7 @@ void drawStick(MocapPose pose) {
   translate(segment.x, segment.z, segment.y);
   fill(250, 4, 5);
   //particle system add here?
-  //sphere(0.05);
+  sphere(0.05);
   popMatrix();
 
   //left hand is blue
@@ -136,12 +140,12 @@ void drawStick(MocapPose pose) {
   //sphere(0.05);
   popMatrix();
 
-  //left foot is yello
+  //left foot is purple
   segment = pose.segments[Body.LEFT_FOOT];
   pushMatrix();
   translate(segment.x, segment.z, segment.y);
-  fill(245, 245, 5);
-  //sphere(0.05);
+  fill(77, 25, 245);
+  sphere(0.05);
   popMatrix();
 
 
