@@ -2,7 +2,8 @@ import java.net.SocketException;
 
 
 final int PORT = 9763;
-
+int TIME_INTERVAL = 1000*10;
+int lastTime = 0;
 float angle = 0;
 
 class Body {
@@ -20,7 +21,7 @@ MocapServer server;
 
 void setup() {
   size(displayWidth, displayHeight, P3D);
-  background(0,0,0);
+  background(0, 0, 0);
   perspective(PI/6, width/height, 0.5, 200);
 
 
@@ -36,6 +37,7 @@ void setup() {
 
 
 
+
 void draw() {
   //background(0, 0, 0); 
   //translate(width/2, height/2, 0);
@@ -46,34 +48,44 @@ void draw() {
   //fill(0, 40);
   //rect(0,0, width, height);
   lights();
+  int time = millis();
+  
+  if (time - lastTime >= TIME_INTERVAL){
+    drawFigure(); 
+    lastTime = time;
+  }
+}
 
-
-
-
+void drawFigure() {
   if (server.pose != null) {
     //drawBalls(server.pose);
     QuaternionSegment pelvis = server.pose.segments[Body.PELVIS];
-   
-    camera(10*cos(angle), 10, 10*sin(angle), 0,0,0, 0, -1.0, 0);
-    
-    translate(-pelvis.x, -pelvis.z, -pelvis.y);
-    
-    drawStick(server.pose);
-    angle += 0.005;
 
+    camera(10, 10, 10, 0, 0, 0, 0, -1.0, 0);
+
+
+    for (float angle = 0; angle < TWO_PI; angle += 0.05) {
+      pushMatrix();
+      translate(pelvis.x, pelvis.z, pelvis.y);
+      rotateY(angle);
+      translate(-pelvis.x, -pelvis.z, -pelvis.y);
+      drawStick(server.pose);
+      popMatrix();
+    }
   }
 }
-void drawCoordSys(float len){
-   //draw the x coordinate red
-   stroke(250,0,0);
-   line(0,len,0,0,0,0);
-   //draw the y coordinate green
-   stroke(65,173,48);
-   line(0,0,0,len,0,0);
-   //draw the z coordinate blue
-   stroke(0,0,250);
-   line(0,0,0,0,0,len);
 
+
+void drawCoordSys(float len) {
+  //draw the x coordinate red
+  stroke(250, 0, 0);
+  line(0, len, 0, 0, 0, 0);
+  //draw the y coordinate green
+  stroke(65, 173, 48);
+  line(0, 0, 0, len, 0, 0);
+  //draw the z coordinate blue
+  stroke(0, 0, 250);
+  line(0, 0, 0, 0, 0, len);
 }
 
 void drawConnection(MocapPose pose, int point1, int point2) {
@@ -93,8 +105,8 @@ void drawStick(MocapPose pose) {
   segment = pose.segments[Body.HEAD];
   pushMatrix();
   translate(segment.x, segment.z, segment.y);
-  fill(77, 45, 173);
-  //sphere(0.10);
+  fill(165);
+  sphere(0.10);
   popMatrix();
 
   line(0, segment.x, 0, segment.z, 0, segment.y);
@@ -135,7 +147,7 @@ void drawStick(MocapPose pose) {
 
 
   // draw shoulders
-  stroke(165,35);
+  stroke(165, 100);
   //strokeWeight(0.25);
   drawConnection(pose, Body.RIGHT_SHOULDER, Body.LEFT_SHOULDER);
 
@@ -186,4 +198,8 @@ void drawBalls(MocapPose pose) {
       popMatrix();
     }
   }
+}
+
+void keyPressed() {
+  redraw();
 }
