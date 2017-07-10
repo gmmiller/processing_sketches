@@ -2,10 +2,16 @@ import java.net.SocketException;
 
 
 final int PORT = 9763;
-int TIME_INTERVAL = 1000*10;
-int lastTime = 0;
+int TIME_INTERVAL = 1000*10; //in milliseconds
+int NUM_OF_POSES = 3;
+float ROTATION = 16; //what to rotate the camera by (starting slow)
+int lastTime = -10;
+int pose_num = 1;
 float angle = 0;
 float angle2 = 0;
+
+//array of all the poses 
+MocapPose[] poses = new MocapPose[NUM_OF_POSES];
 
 class Body {
   final static  int PELVIS = 1, L5 = 2, L3 = 3, T12 = 4, T8 = 5;
@@ -40,51 +46,68 @@ void setup() {
 
 
 void draw() {
-  //background(0, 0, 0); 
-  //translate(width/2, height/2, 0);
-  //scale(200, -200, 200);
-  //change rotation and see character different ways 
-  //rotateY(-PI/2);
-  //noStroke();
-  //fill(0, 40);
-  //rect(0,0, width, height);
+  background(0, 0, 0); 
+
   lights();
   int time = millis();
-  //attempt to rotate the camera around the x axis 
-  camera(10, 10, 10, 0, 0, 0, 0, -1.0, 0);
-  //angle2 += 0.05;
-
-  if (time - lastTime >= TIME_INTERVAL) {
-    drawFigure(); 
-    lastTime = time;
-  }
-}
-
-void drawFigure() {
+  //adds the poses to an array
   if (server.pose != null) {
-    //drawBalls(server.pose);
-
-
-    for (float angle = 0; angle < TWO_PI; angle += 0.05) {
-      QuaternionSegment head = server.pose.segments[Body.HEAD];
-      pushMatrix();
-      translate(head.x, head.z, head.y);
-      rotateY(angle);
-      translate(-head.x, -head.z, -head.y);
-      drawStick(server.pose);
-      popMatrix();
+    if (time - lastTime >= TIME_INTERVAL) {
+      //drawFigure(); 
+      if (pose_num < NUM_OF_POSES) {      
+        poses[pose_num] = server.pose;
+        pose_num ++;
+      }
+      lastTime = time;
     }
   }
+
+  //attempt to rotate the camera around the x axis
+  camera(10, 10*sin(angle2), 10, 0, 0, 0, 0, -1.0, 0);
+  translate(0, 0, 0);
+  drawCoordSys(2);
+
+  //draw the figures after rotating the display
+  for (int i = 0; i<poses.length; i++) {
+    drawStick(poses[i]);
+  }
+
+
+
+
+  //rotate the angle by the rotation
+  angle2 = angle2 + PI/ROTATION;
+  println(angle2);
 }
+
+
+void drawRotatedFigure(MocapPose incomingPose) {
+
+  //drawBalls(server.pose);
+
+
+
+
+  for (float angle = 0; angle < TWO_PI; angle += 0.05) {
+    QuaternionSegment head = incomingPose.segments[Body.HEAD];
+    pushMatrix();
+    translate(head.x, head.z, head.y);
+    rotateY(angle);
+    translate(-head.x, -head.z, -head.y);
+    drawStick(incomingPose);
+    popMatrix();
+  }
+}
+
 
 
 void drawCoordSys(float len) {
   //draw the x coordinate red
   stroke(250, 0, 0);
-  line(0, len, 0, 0, 0, 0);
+  line(0, 0, 0, len, 0, 0);
   //draw the y coordinate green
   stroke(65, 173, 48);
-  line(0, 0, 0, len, 0, 0);
+  line(0, 0, 0, 0, len, 0);
   //draw the z coordinate blue
   stroke(0, 0, 250);
   line(0, 0, 0, 0, 0, len);
