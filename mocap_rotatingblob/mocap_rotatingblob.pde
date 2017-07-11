@@ -4,7 +4,7 @@ import java.net.SocketException;
 final int PORT = 9763;
 int TIME_INTERVAL = 1000*10; //in milliseconds
 int NUM_OF_POSES = 3;
-float ROTATION = 16; //what to rotate the camera by (starting slow)
+float ROTATION = 32; //what to rotate the camera by (starting slow)
 int lastTime = -10;
 int pose_num = 1;
 float angle = 0;
@@ -50,18 +50,22 @@ void draw() {
 
   lights();
   int time = millis();
+
   //adds the poses to an array
   if (server.pose != null) {
-    if (time - lastTime >= TIME_INTERVAL) {
-      //drawFigure(); 
-      if (pose_num < NUM_OF_POSES) {      
-        poses[pose_num] = server.pose;
-        pose_num ++;
-      }
-      lastTime = time;
-    }
+    //if (time - lastTime >= TIME_INTERVAL) {
+    //drawFigure(); 
+    // if (pose_num < NUM_OF_POSES) {      
+    poses[1] = server.pose;
+    //pose_num ++;
+    //}
+    //lastTime = time;
+    //}
   }
-
+  println(poses[1]);
+  if (time > 1000*10) {
+    drawStick(poses[1]);
+  }
   //attempt to rotate the camera around the x axis
   camera(10, 10*sin(angle2), 10, 0, 0, 0, 0, -1.0, 0);
   translate(0, 0, 0);
@@ -69,11 +73,8 @@ void draw() {
 
   //draw the figures after rotating the display
   for (int i = 0; i<poses.length; i++) {
-    drawStick(poses[i]);
+    //drawStick(poses[i]);
   }
-
-
-
 
   //rotate the angle by the rotation
   angle2 = angle2 + PI/ROTATION;
@@ -82,12 +83,7 @@ void draw() {
 
 
 void drawRotatedFigure(MocapPose incomingPose) {
-
-  //drawBalls(server.pose);
-
-
-
-
+  //draws the current pose rotated around the head by 360 degrees
   for (float angle = 0; angle < TWO_PI; angle += 0.05) {
     QuaternionSegment head = incomingPose.segments[Body.HEAD];
     pushMatrix();
@@ -205,26 +201,4 @@ void drawStick(MocapPose pose) {
   drawConnection(pose, Body.RIGHT_UPPER_LEG, Body.RIGHT_LOWER_LEG);
   drawConnection(pose, Body.RIGHT_LOWER_LEG, Body.RIGHT_FOOT);
   drawConnection(pose, Body.RIGHT_FOOT, Body.RIGHT_TOE);
-}
-
-
-void drawBalls(MocapPose pose) {
-  noStroke();
-  fill(255, 255, 255);
-  for (QuaternionSegment segment : pose.segments) {
-    if (segment != null) {
-      float x = segment.x;
-      float y = segment.y;
-      float z = segment.z;
-
-      pushMatrix();
-      translate(x, z, y);
-      sphere(.05);
-      popMatrix();
-    }
-  }
-}
-
-void keyPressed() {
-  redraw();
 }
