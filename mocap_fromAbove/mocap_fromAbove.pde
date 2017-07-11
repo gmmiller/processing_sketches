@@ -40,13 +40,14 @@ void setup() {
 
 
 void draw() {
-  //background(0, 0, 0); 
+  //background(0, 0, 0,20); 
+  
   //translate(width/2, height/2, 0);
   //scale(200, -200, 200);
   //change rotation and see character different ways 
   //rotateY(-PI/2);
   //noStroke();
-  //fill(0, 40);
+  //fill(0, 20);
   //rect(0,0, width, height);
   lights();
   int time = millis();
@@ -116,7 +117,7 @@ void drawStick(MocapPose pose) {
   segment = pose.segments[Body.HEAD];
   pushMatrix();
   translate(segment.x, segment.z, segment.y);
-  fill(165);
+  fill(100);
   sphere(0.10);
   popMatrix();
 
@@ -126,7 +127,7 @@ void drawStick(MocapPose pose) {
   segment = pose.segments[Body.RIGHT_HAND];
   pushMatrix();
   translate(segment.x, segment.z, segment.y);
-  fill(250, 4, 5);
+  fill(200,45);
   //particle system add here?
   sphere(0.05);
   popMatrix();
@@ -135,28 +136,28 @@ void drawStick(MocapPose pose) {
   segment = pose.segments[Body.LEFT_HAND];
   pushMatrix();
   translate(segment.x, segment.z, segment.y);
-  fill(0, 0, 245);    
-  //sphere(0.05);
+  fill(160,45);    
+  sphere(0.05);
   popMatrix();
 
   //right foot is green
   segment = pose.segments[Body.RIGHT_FOOT];
   pushMatrix();
   translate(segment.x, segment.z, segment.y);
-  fill(20, 255, 5);
-  //sphere(0.05);
+  fill(100,45);
+  sphere(0.05);
   popMatrix();
 
   //left foot is purple
   segment = pose.segments[Body.LEFT_FOOT];
   pushMatrix();
   translate(segment.x, segment.z, segment.y);
-  fill(77, 25, 245);
+  fill(100,45);
   sphere(0.05);
   popMatrix();
 
 
-
+  /*
   // draw shoulders
   stroke(165, 100);
   //strokeWeight(0.25);
@@ -191,6 +192,7 @@ void drawStick(MocapPose pose) {
   drawConnection(pose, Body.RIGHT_UPPER_LEG, Body.RIGHT_LOWER_LEG);
   drawConnection(pose, Body.RIGHT_LOWER_LEG, Body.RIGHT_FOOT);
   drawConnection(pose, Body.RIGHT_FOOT, Body.RIGHT_TOE);
+  */
 }
 
 

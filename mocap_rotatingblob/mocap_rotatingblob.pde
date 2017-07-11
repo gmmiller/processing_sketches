@@ -3,10 +3,10 @@ import java.net.SocketException;
 
 final int PORT = 9763;
 int TIME_INTERVAL = 1000*10; //in milliseconds
-int NUM_OF_POSES = 3;
-float ROTATION = 32; //what to rotate the camera by (starting slow)
+int NUM_OF_POSES = 10;
+float ROTATION = 6; //what to rotate the camera by (starting slow)
 int lastTime = -10;
-int pose_num = 1;
+int pose_num = 0;
 float angle = 0;
 float angle2 = 0;
 
@@ -55,30 +55,40 @@ void draw() {
   if (server.pose != null) {
     //if (time - lastTime >= TIME_INTERVAL) {
     //drawFigure(); 
-    // if (pose_num < NUM_OF_POSES) {      
-    poses[1] = server.pose;
+    //if (pose_num < NUM_OF_POSES) {      
+    poses[pose_num] = server.pose;
+    pose_num = (pose_num + 1) % NUM_OF_POSES;
     //pose_num ++;
     //}
     //lastTime = time;
     //}
-  }
-  println(poses[1]);
-  if (time > 1000*10) {
-    drawStick(poses[1]);
-  }
-  //attempt to rotate the camera around the x axis
-  camera(10, 10*sin(angle2), 10, 0, 0, 0, 0, -1.0, 0);
-  translate(0, 0, 0);
-  drawCoordSys(2);
 
-  //draw the figures after rotating the display
-  for (int i = 0; i<poses.length; i++) {
-    //drawStick(poses[i]);
-  }
 
-  //rotate the angle by the rotation
-  angle2 = angle2 + PI/ROTATION;
-  println(angle2);
+    //attempt to rotate the camera around the x axis
+    camera(0, 20, 20, 0, 0, 0, 0, -1.0, 0);
+    translate(0, 0, 0);
+    rotateX(radians(angle2));
+    drawCoordSys(2);
+    println(poses[0]);
+    for (int i = 0; i < NUM_OF_POSES; i=i+2) {
+      int current = (i + pose_num) % NUM_OF_POSES;
+      pushMatrix();
+      translate(i-5, 0, i-2);
+      if (poses[current] != null) {
+        drawRotatedFigure(poses[current]);
+      }
+      popMatrix();
+    }
+
+    //draw the figures after rotating the display
+    for (int i = 0; i<poses.length; i++) {
+      //drawStick(poses[i]);
+    }
+
+    //rotate the angle by the rotation
+    angle2 = angle2 + PI/ROTATION;
+    println(angle2);
+  }
 }
 
 
