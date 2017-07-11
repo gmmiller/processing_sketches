@@ -30,7 +30,7 @@ MocapServer server;
 
 void setup() {
   size(displayWidth, displayHeight, P3D);
-  background(0, 0, 0);
+  //background(0, 0, 0);
   perspective(PI/6, width/height, 0.5, 200);
 
   for (int i = 0; i < randx.length; i++) {
@@ -55,23 +55,18 @@ void setup() {
 
 
 void draw() {
-  background(13, 30, 48); 
-  //ambientLight(3,44,76);
-  lights();
   int time = millis();
+  background(13, 30, 47+time%20,12); 
+  //lights();
+  ambientLight(3,44,76);
+  directionalLight(255,255,255,10,15,0);
+  
+  
 
   //adds the poses to an array
-  if (server.pose != null) {
-    //if (time - lastTime >= TIME_INTERVAL) {
-    //drawFigure(); 
-    //if (pose_num < NUM_OF_POSES) {      
+  if (server.pose != null) {     
     poses[pose_num] = server.pose;
     pose_num = (pose_num + 1) % NUM_OF_POSES;
-    //pose_num ++;
-    //}
-    //lastTime = time;
-    //}
-
 
     //attempt to rotate the camera around the x axis
     camera(0, -5, 10, 0, 0, 0, 0, 1.0, 0);
