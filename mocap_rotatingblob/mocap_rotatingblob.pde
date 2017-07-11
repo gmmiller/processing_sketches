@@ -4,12 +4,14 @@ import java.net.SocketException;
 final int PORT = 9763;
 int TIME_INTERVAL = 1000*10; //in milliseconds
 int NUM_OF_POSES = 10;
-float ROTATION = 6; //what to rotate the camera by (starting slow)
+float ROTATION = 4; //what to rotate the camera by (starting slow)
 int lastTime = -10;
 int pose_num = 0;
 float angle = 0;
 float angle2 = 0;
-
+//array of the random factors to start the jellyfish/dancers
+float[] randx = new float[NUM_OF_POSES];
+float[] randz = new float[NUM_OF_POSES];
 //array of all the poses 
 MocapPose[] poses = new MocapPose[NUM_OF_POSES];
 
@@ -31,6 +33,13 @@ void setup() {
   background(0, 0, 0);
   perspective(PI/6, width/height, 0.5, 200);
 
+  for (int i = 0; i < randx.length; i++) {
+    randx[i] = random(-4, 6);
+  }
+  for (int i = 0; i < randz.length; i++) {
+    randz[i] = random(-4, 4);
+  }
+
 
   try {
     server = new MocapServer(PORT);
@@ -46,7 +55,7 @@ void setup() {
 
 
 void draw() {
-  background(0, 0, 0); 
+  background(13, 30, 48); 
 
   lights();
   int time = millis();
@@ -65,15 +74,16 @@ void draw() {
 
 
     //attempt to rotate the camera around the x axis
-    camera(0, 20, 20, 0, 0, 0, 0, -1.0, 0);
+    camera(0, -5, 20, 0, 0, 0, 0, 1.0, 0);
     translate(0, 0, 0);
-    rotateX(radians(angle2));
-    drawCoordSys(2);
-    println(poses[0]);
+    //rotateX(radians(angle2));
+    //drawCoordSys(2);
+
+    //println(poses[0]);
     for (int i = 0; i < NUM_OF_POSES; i=i+2) {
       int current = (i + pose_num) % NUM_OF_POSES;
       pushMatrix();
-      translate(i-5, 0, i-2);
+      translate(randx[i], 0, randz[i]);
       if (poses[current] != null) {
         drawRotatedFigure(poses[current]);
       }
@@ -87,14 +97,14 @@ void draw() {
 
     //rotate the angle by the rotation
     angle2 = angle2 + PI/ROTATION;
-    println(angle2);
+    //println(angle2);
   }
 }
 
 
 void drawRotatedFigure(MocapPose incomingPose) {
   //draws the current pose rotated around the head by 360 degrees
-  for (float angle = 0; angle < TWO_PI; angle += 0.05) {
+  for (float angle = 0; angle < TWO_PI; angle += 0.025) {
     QuaternionSegment head = incomingPose.segments[Body.HEAD];
     pushMatrix();
     translate(head.x, head.z, head.y);
@@ -120,7 +130,7 @@ void drawCoordSys(float len) {
 }
 
 void drawConnection(MocapPose pose, int point1, int point2) {
-  println(point1, point2);
+  //println(point1, point2);
   QuaternionSegment segment1 = pose.segments[point1];
   QuaternionSegment segment2 = pose.segments[point2];
   line(segment1.x, segment1.z, segment1.y, segment2.x, segment2.z, segment2.y);
@@ -136,9 +146,32 @@ void drawStick(MocapPose pose) {
   segment = pose.segments[Body.HEAD];
   pushMatrix();
   translate(segment.x, segment.z, segment.y);
-  fill(165);
-  sphere(0.10);
+  fill(231, 215, 242, 100);
+  sphere(0.17);
   popMatrix();
+
+  //draw shoulders
+  segment = pose.segments[Body.RIGHT_SHOULDER];
+  pushMatrix();
+  translate(segment.x, segment.z, segment.y);
+  fill(94, 68, 130, 100);
+  sphere(0.05);
+  popMatrix();
+  /*
+  segment = pose.segments[Body.LEFT_SHOULDER];
+   pushMatrix();
+   translate(segment.x, segment.z, segment.y);
+   sphere(0.05);
+   popMatrix();
+   
+   //draw upper arm
+   segment = pose.segments[Body.RIGHT_UPPER_ARM];
+   pushMatrix();
+   translate(segment.x, segment.z, segment.y);
+   fill(231,215,242,20);
+   sphere(0.05);
+   popMatrix();
+   */
 
   line(0, segment.x, 0, segment.z, 0, segment.y);
 
@@ -146,7 +179,7 @@ void drawStick(MocapPose pose) {
   segment = pose.segments[Body.RIGHT_HAND];
   pushMatrix();
   translate(segment.x, segment.z, segment.y);
-  fill(250, 4, 5);
+  fill(168, 11, 159);
   //particle system add here?
   sphere(0.05);
   popMatrix();
@@ -155,31 +188,31 @@ void drawStick(MocapPose pose) {
   segment = pose.segments[Body.LEFT_HAND];
   pushMatrix();
   translate(segment.x, segment.z, segment.y);
-  fill(0, 0, 245);    
-  //sphere(0.05);
+  fill(168, 11, 159);    
+  sphere(0.03);
   popMatrix();
 
   //right foot is green
   segment = pose.segments[Body.RIGHT_FOOT];
   pushMatrix();
   translate(segment.x, segment.z, segment.y);
-  fill(20, 255, 5);
-  //sphere(0.05);
+  fill(94, 68, 130);
+  sphere(0.035);
   popMatrix();
 
   //left foot is purple
   segment = pose.segments[Body.LEFT_FOOT];
   pushMatrix();
   translate(segment.x, segment.z, segment.y);
-  fill(77, 25, 245);
-  sphere(0.05);
+  fill(94, 68, 130);
+  sphere(0.035);
   popMatrix();
 
 
-
-  // draw shoulders
-  stroke(165, 100);
-  //strokeWeight(0.25);
+  //draw the lines
+  stroke(147, 92, 175);
+  strokeWeight(2);
+  //draw shoulders
   drawConnection(pose, Body.RIGHT_SHOULDER, Body.LEFT_SHOULDER);
 
   //// draw right arm
