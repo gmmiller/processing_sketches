@@ -1,7 +1,7 @@
 import java.net.SocketException;
-import com.hamoid.*;
 
-VideoExport videoExport;
+//to be used with the xsens video walking in a spiral with arm flapping for best results...
+
 
 final int PORT = 9763;
 int TIME_INTERVAL = 1000*10; //in milliseconds
@@ -31,8 +31,7 @@ void setup() {
   background(73, 89, 103);
   perspective(PI/6, width/height, 0.5, 200);
 
-  videoExport = new VideoExport(this);
-  videoExport.startMovie();
+
 
   strokeCap(ROUND);
 
@@ -142,7 +141,7 @@ void draw() {
       //connector(((current + 10)%NUM_OF_POSES), Body.LEFT_TOE);
     }
   }
-  videoExport.saveFrame();
+ 
 }
 
 //draws lines from each pose (starting at pose i) from the body part (BP) entered. 
@@ -299,12 +298,4 @@ void drawStick(MocapPose pose) {
   drawConnection(pose, Body.RIGHT_UPPER_LEG, Body.RIGHT_LOWER_LEG);
   drawConnection(pose, Body.RIGHT_LOWER_LEG, Body.RIGHT_FOOT);
   //drawConnection(pose, Body.RIGHT_FOOT, Body.RIGHT_TOE);
-}
-
-
-void keyPressed() {
-  if (key == 'q') {
-    videoExport.endMovie();
-    exit();
-  }
 }
