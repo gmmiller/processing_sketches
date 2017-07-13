@@ -1,5 +1,7 @@
 import java.net.SocketException;
+import com.hamoid.*;
 
+VideoExport videoExport;
 
 final int PORT = 9763;
 int TIME_INTERVAL = 1000*10; //in milliseconds
@@ -7,12 +9,7 @@ int NUM_OF_POSES = 50;
 float ROTATION = 4; //what to rotate the camera by (starting slow)
 int lastTime = -10;
 int pose_num = 0;
-float angle = 0;
-float angle2 = 0;
-//array of the random factors to start the jellyfish/dancers
-float[] randx = new float[NUM_OF_POSES];
-float[] randz = new float[NUM_OF_POSES];
-int time;
+
 //array of all the poses 
 MocapPose[] poses = new MocapPose[NUM_OF_POSES];
 
@@ -31,16 +28,12 @@ MocapServer server;
 
 void setup() {
   size(displayWidth, displayHeight, P3D);
-  background(73,89,103);
+  background(73, 89, 103);
   perspective(PI/6, width/height, 0.5, 200);
 
-  for (int i = 0; i < randx.length; i++) {
-    randx[i] = random(-2, 2);
-  }
-  for (int i = 0; i < randz.length; i++) {
-    randz[i] = random(-2, 2);
-  }
-  
+  videoExport = new VideoExport(this);
+  videoExport.startMovie();
+
   strokeCap(ROUND);
 
   try {
@@ -57,8 +50,8 @@ void setup() {
 
 
 void draw() {
-  time = millis();
-  background(73,89,103);
+
+  //background(73,89,103);
   //lights();
   pushMatrix();
   fill(0, 10);
@@ -79,7 +72,7 @@ void draw() {
     pose_num = (pose_num + 1) % NUM_OF_POSES;
 
     //attempt to rotate the camera around the x axis
-    camera(7, 7, 7, 0, 0, 0, 0, -1.0, 0);
+    camera(8, 5.33, 1, 0, 0, 0, 0, -1.0, 0);
     translate(0, 0, 0);
     //rotateX(radians(angle2));
     //drawCoordSys(2);
@@ -88,36 +81,36 @@ void draw() {
     //for (int i = 0; i < NUM_OF_POSES; i += (NUM_OF_POSES/5)) {
     int current = (pose_num - 1 + NUM_OF_POSES) % NUM_OF_POSES;     
     if (poses[current] != null && poses[(current+10)%NUM_OF_POSES] != null && poses[(current+20)%NUM_OF_POSES] != null && poses[(current+30)%NUM_OF_POSES] != null && poses[(current+40)%NUM_OF_POSES] != null) {
-      
+
       //back etc.
-      connector(current, Body.HEAD);
+      //connector(current, Body.HEAD);
       //connector(current, Body.L5);
       //connector(current, Body.L3);
       //connector(current, Body.T12);
       //connector(current, Body.T8);
-      connector(current, Body.NECK);
-      connector(current, Body.PELVIS);
+      //connector(current, Body.NECK);
+      //connector(current, Body.PELVIS);
       //right arm
-      connector(current, Body.RIGHT_SHOULDER);
-      connector(current, Body.RIGHT_UPPER_ARM);
+      //connector(current, Body.RIGHT_SHOULDER);
+      //connector(current, Body.RIGHT_UPPER_ARM);
       //connector(current, Body.RIGHT_FORE_ARM);
       connector(current, Body.RIGHT_HAND);
       //left arm
-      connector(current, Body.LEFT_SHOULDER);
-      connector(current, Body.LEFT_UPPER_ARM);
+      //connector(current, Body.LEFT_SHOULDER);
+      //connector(current, Body.LEFT_UPPER_ARM);
       //connector(current, Body.LEFT_FORE_ARM);
-      connector(current, Body.LEFT_HAND);
+      //connector(current, Body.LEFT_HAND);
       //right leg
-      connector(current, Body.RIGHT_UPPER_LEG);
-      connector(current, Body.RIGHT_LOWER_LEG);
-      connector(current, Body.RIGHT_FOOT);
-      connector(current, Body.RIGHT_TOE);
+      //connector(current, Body.RIGHT_UPPER_LEG);
+      //connector(current, Body.RIGHT_LOWER_LEG);
+      //connector(current, Body.RIGHT_FOOT);
+      //connector(current, Body.RIGHT_TOE);
       //left leg
       connector(current, Body.LEFT_UPPER_LEG);
-      connector(current, Body.LEFT_LOWER_LEG);
-      connector(current, Body.LEFT_FOOT);
-      connector(current, Body.LEFT_TOE);
-      
+      //connector(current, Body.LEFT_LOWER_LEG);
+      //connector(current, Body.LEFT_FOOT);
+      //connector(current, Body.LEFT_TOE);
+
       //stroke(200,10,20, 200);
       ////back etc.
       //connector(((current + 10)%NUM_OF_POSES), Body.HEAD);
@@ -147,12 +140,9 @@ void draw() {
       //connector(((current + 10)%NUM_OF_POSES), Body.LEFT_LOWER_LEG);
       //connector(((current + 10)%NUM_OF_POSES), Body.LEFT_FOOT);
       //connector(((current + 10)%NUM_OF_POSES), Body.LEFT_TOE);
-      
-
-
-
     }
   }
+  videoExport.saveFrame();
 }
 
 //draws lines from each pose (starting at pose i) from the body part (BP) entered. 
@@ -165,17 +155,17 @@ void connector(int i, int BP) {
   QuaternionSegment c5 = poses[(i+40)%NUM_OF_POSES].segments[BP];
 
 
-  strokeWeight(4);
-  stroke(155,170,185,40);
+  strokeWeight(1);
+  stroke(155, 170, 185, 20);
   line(c1.x, c1.z, c1.y, c2.x, c2.z, c2.y);
-  strokeWeight(7);
-  stroke(237,115,101);
+  strokeWeight(1);
+  stroke(237, 115, 101, 20);
   line(c2.x, c2.z, c2.y, c3.x, c3.z, c3.y);
-  strokeWeight(10);
-  stroke(241,197,112);
+  strokeWeight(1);
+  stroke(241, 197, 112, 20);
   line(c3.x, c3.z, c3.y, c4.x, c4.z, c4.y);
-  strokeWeight(20);
-  stroke(161,193,187);
+  strokeWeight(1);
+  stroke(161, 193, 187, 20);
   line(c4.x, c4.z, c4.y, c5.x, c5.z, c5.y);
 }
 
@@ -309,4 +299,12 @@ void drawStick(MocapPose pose) {
   drawConnection(pose, Body.RIGHT_UPPER_LEG, Body.RIGHT_LOWER_LEG);
   drawConnection(pose, Body.RIGHT_LOWER_LEG, Body.RIGHT_FOOT);
   //drawConnection(pose, Body.RIGHT_FOOT, Body.RIGHT_TOE);
+}
+
+
+void keyPressed() {
+  if (key == 'q') {
+    videoExport.endMovie();
+    exit();
+  }
 }
