@@ -3,7 +3,7 @@ import java.net.SocketException;
 
 final int PORT = 9763;
 int TIME_INTERVAL = 1000*10; //in milliseconds
-int NUM_OF_POSES = 5;
+int NUM_OF_POSES = 50;
 float ROTATION = 4; //what to rotate the camera by (starting slow)
 int lastTime = -10;
 int pose_num = 0;
@@ -12,6 +12,7 @@ float angle2 = 0;
 //array of the random factors to start the jellyfish/dancers
 float[] randx = new float[NUM_OF_POSES];
 float[] randz = new float[NUM_OF_POSES];
+int time;
 //array of all the poses 
 MocapPose[] poses = new MocapPose[NUM_OF_POSES];
 
@@ -55,7 +56,7 @@ void setup() {
 
 
 void draw() {
-  int time = millis();
+   time = millis();
   //background(13, 30, 47+time%20, 12); 
   //lights();
   ambientLight(3, 44, 76);
@@ -69,23 +70,30 @@ void draw() {
     pose_num = (pose_num + 1) % NUM_OF_POSES;
 
     //attempt to rotate the camera around the x axis
-    camera(10, 0, 10, 0, 0, 0, 0, -1.0, 0);
+    camera(5, 10, 05, 0, 0, 0, 0, -1.0, 0);
     translate(0, 0, 0);
     //rotateX(radians(angle2));
-    drawCoordSys(2);
+    //drawCoordSys(2);
 
     //println(poses[0]);
-    for (int i = 0; i < NUM_OF_POSES; i++) {
+    for (int i = 0; i < NUM_OF_POSES; i += (NUM_OF_POSES/5)) {
       int current = (i + pose_num) % NUM_OF_POSES;     
       if (poses[current] != null && poses[(current+1)%5] != null && poses[(current+2)%5] != null && poses[(current+3)%5] != null && poses[(current+4)%5] != null) {
+        stroke(165,5);
         connector(current, Body.HEAD);
+        stroke(20,20,50,5);
         connector(current, Body.LEFT_FOOT);
+        stroke(165,5);
+        connector(current, Body.RIGHT_LOWER_LEG);
         connector(current, Body.RIGHT_FOOT);
+        stroke(20,20,50,5);
         connector(current, Body.LEFT_HAND);
+        stroke(165,5);
         connector(current, Body.RIGHT_HAND);
+        stroke(20, 50, 20,5);
         connector(current, Body.NECK);
         connector(current, Body.PELVIS);
-        drawStick(poses[current]);
+        //drawStick(poses[current]);
       }
     }
   }
@@ -100,13 +108,13 @@ void connector(int i, int BP) {
   QuaternionSegment c3 = poses[((i+2)%5)].segments[BP];
   QuaternionSegment c4 = poses[(i+3)%5].segments[BP];
   QuaternionSegment c5 = poses[(i+4)%5].segments[BP];
-  
-  stroke(178,15);
-  strokeWeight(2);
-  line(c1.x, c1.y, c1.z, c2.x, c2.y, c2.z);
-  line(c2.x, c2.y, c2.z, c3.x, c3.y, c3.z);
-  line(c3.x, c3.y, c3.z, c4.x, c4.y, c4.z);
-  line(c4.x, c4.y, c4.z, c5.x, c5.y, c5.z);
+
+ 
+  strokeWeight(1);
+  line(c1.x, c1.z, c1.y, c2.x, c2.z, c2.y);
+  line(c2.x, c2.z, c2.y, c3.x, c3.z, c3.y);
+  line(c3.x, c3.z, c3.y, c4.x, c4.z, c4.y);
+  line(c4.x, c4.z, c4.y, c5.x, c5.z, c5.y);
 }
 
 
