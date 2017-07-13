@@ -50,18 +50,18 @@ void setup() {
 
 void draw() {
 
-  background(73,89,103);
-  //lights();
+  background(73, 89, 103);
+  lights();
   pushMatrix();
-  fill(0, 10);
+  //fill(0, 50);
   noStroke();
   translate(-6, -5, 0);
   rotateY(radians(45));
   //rect is not all the way correctly allighned don't worry about it
   //rect(0, 0, 40, 40);
   popMatrix();
-  ambientLight(3, 44, 76);
-  directionalLight(255, 255, 255, 10, 15, 0);
+  //ambientLight(3, 44, 76);
+  //directionalLight(255, 255, 255, 10, 15, 0);
 
 
 
@@ -78,17 +78,17 @@ void draw() {
 
     //println(poses[0]);
     //for (int i = 0; i < NUM_OF_POSES; i += (NUM_OF_POSES/5)) {
-    int current = (pose_num - 1 + NUM_OF_POSES) % NUM_OF_POSES;     
+    int current = (pose_num + NUM_OF_POSES) % NUM_OF_POSES;     
     if (poses[current] != null && poses[(current+10)%NUM_OF_POSES] != null && poses[(current+20)%NUM_OF_POSES] != null && poses[(current+30)%NUM_OF_POSES] != null && poses[(current+40)%NUM_OF_POSES] != null) {
 
       //back etc.
-      //connector(current, Body.HEAD);
-      //connector(current, Body.L5);
+      connector(current, Body.HEAD);
+      connector(current, Body.L5);
       //connector(current, Body.L3);
-      //connector(current, Body.T12);
+      connector(current, Body.T12);
       //connector(current, Body.T8);
       //connector(current, Body.NECK);
-      //connector(current, Body.PELVIS);
+      connector(current, Body.PELVIS);
       //right arm
       strokeWeight(5);
       connector(current, Body.RIGHT_SHOULDER);
@@ -96,10 +96,10 @@ void draw() {
       connector(current, Body.RIGHT_FORE_ARM);
       connector(current, Body.RIGHT_HAND);
       //left arm
-      //connector(current, Body.LEFT_SHOULDER);
-      //connector(current, Body.LEFT_UPPER_ARM);
-      //connector(current, Body.LEFT_FORE_ARM);
-      //connector(current, Body.LEFT_HAND);
+      connector(current, Body.LEFT_SHOULDER);
+      connector(current, Body.LEFT_UPPER_ARM);
+      connector(current, Body.LEFT_FORE_ARM);
+      connector(current, Body.LEFT_HAND);
       //right leg
       strokeWeight(5);
       connector(current, Body.RIGHT_UPPER_LEG);
@@ -155,10 +155,10 @@ void connector(int i, int BP) {
   QuaternionSegment c5 = poses[(i+40)%NUM_OF_POSES].segments[BP];
 
 
-  //strokeWeight(1);
+  strokeWeight(9);
   stroke(155, 170, 185, 90);
   line(c1.x, c1.z, c1.y, c2.x, c2.z, c2.y);
-  //strokeWeight(1);
+
   stroke(237, 115, 101, 90);
   line(c2.x, c2.z, c2.y, c3.x, c3.z, c3.y);
   //strokeWeight(1);
@@ -167,6 +167,26 @@ void connector(int i, int BP) {
   //strokeWeight(1);
   stroke(161, 193, 187, 90);
   line(c4.x, c4.z, c4.y, c5.x, c5.z, c5.y);
+  
+  
+  //pushMatrix();
+  //translate(c1.x, c1.z, c1.y);
+  //noStroke();
+  //fill(155, 170, 185, 90);
+  //sphere(0.065);
+  //popMatrix();
+  // pushMatrix();
+  //translate(c2.x, c2.z, c2.y);
+  //noStroke();
+  //fill(237, 115, 101,90);
+  //sphere(0.025);
+  //popMatrix();
+  // pushMatrix();
+  //translate(c3.x, c3.z, c3.y);
+  //noStroke();
+  //fill(241, 197, 112, 90);
+  //sphere(0.035);
+  //popMatrix();
 }
 
 
