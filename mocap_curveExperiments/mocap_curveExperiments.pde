@@ -5,7 +5,7 @@ import java.net.SocketException;
 
 final int PORT = 9763;
 int TIME_INTERVAL = 1000*10; //in milliseconds
-int NUM_OF_POSES = 50;
+int NUM_OF_POSES = 100;
 float ROTATION = 4; //what to rotate the camera by (starting slow)
 int CONS = 20; //number of connections to make 
 int STEP = NUM_OF_POSES/CONS; //distance between poses to draw
@@ -52,7 +52,7 @@ void setup() {
 
 void draw() {
 
-  //background(73, 89, 103);
+  background(73, 89, 103);
   lights();
   pushMatrix();
   //fill(0, 50);
@@ -82,38 +82,35 @@ void draw() {
     //for (int i = 0; i < NUM_OF_POSES; i += (NUM_OF_POSES/5)) {
     int current = (pose_num + NUM_OF_POSES) % NUM_OF_POSES;     
     if (poses[(current+NUM_OF_POSES)%NUM_OF_POSES] != null) {
-    //how to loop this part ^^^
-    
+      //how to loop this part ^^^
+
       //back etc.
       connector(current, Body.HEAD);
-      connector(current, Body.L5);
-      //connector(current, Body.L3);
-      connector(current, Body.T12);
-      //connector(current, Body.T8);
-      //connector(current, Body.NECK);
-      connector(current, Body.PELVIS);
+      //connector(current, Body.L5);
+      ////connector(current, Body.L3);
+      //connector(current, Body.T12);
+      ////connector(current, Body.T8);
+      ////connector(current, Body.NECK);
+      //connector(current, Body.PELVIS);
       //right arm
-      
-      connector(current, Body.RIGHT_SHOULDER);
-      connector(current, Body.RIGHT_UPPER_ARM);
-      connector(current, Body.RIGHT_FORE_ARM);
-      connector(current, Body.RIGHT_HAND);
+
+      //connector(current, Body.RIGHT_HAND);
       //left arm
-      connector(current, Body.LEFT_SHOULDER);
-      connector(current, Body.LEFT_UPPER_ARM);
-      connector(current, Body.LEFT_FORE_ARM);
-      connector(current, Body.LEFT_HAND);
+      //connector(current, Body.LEFT_SHOULDER);
+      //connector(current, Body.LEFT_UPPER_ARM);
+      //connector(current, Body.LEFT_FORE_ARM);
+      //connector(current, Body.LEFT_HAND);
       //right leg
-      
-      connector(current, Body.RIGHT_UPPER_LEG);
-      connector(current, Body.RIGHT_LOWER_LEG);
-      connector(current, Body.RIGHT_FOOT);
-      connector(current, Body.RIGHT_TOE);
+
+      //connector(current, Body.RIGHT_UPPER_LEG);
+      //connector(current, Body.RIGHT_LOWER_LEG);
+      //connector(current, Body.RIGHT_FOOT);
+      //connector(current, Body.RIGHT_TOE);
       //left leg
-      connector(current, Body.LEFT_UPPER_LEG);
-      connector(current, Body.LEFT_LOWER_LEG);
-      connector(current, Body.LEFT_FOOT);
-      connector(current, Body.LEFT_TOE);
+      //connector(current, Body.LEFT_UPPER_LEG);
+      //connector(current, Body.LEFT_LOWER_LEG);
+      //connector(current, Body.LEFT_FOOT);
+      //connector(current, Body.LEFT_TOE);
     }
   }
 }
@@ -121,12 +118,12 @@ void draw() {
 //draws lines from each pose (starting at pose i) from the body part (BP) entered. 
 void connector(int i, int BP) {
 
-  for (int x = 1; x <= CONS; x ++){
+  for (int x = 1; x <= CONS; x ++) {
     //in theory makes all the connections based on the numbers set at the top..
-    QuaternionSegment c1 = poses[(i*x)%NUM_OF_POSES].segments[BP];
+    QuaternionSegment c1 = poses[(i+x)%NUM_OF_POSES].segments[BP];
     QuaternionSegment c2 = poses[(i+STEP*x)%NUM_OF_POSES].segments[BP];
-    
-    stroke(161-(2*x), 193, 187+(5*x), 5);
+
+    stroke(161-(10*x), 193, 187+(3*x), 70);
     strokeWeight(1);
     line(c1.x, c1.z, c1.y, c2.x, c2.z, c2.y);
   }  
@@ -136,7 +133,7 @@ void connector(int i, int BP) {
   //QuaternionSegment c4 = poses[(i+30)%NUM_OF_POSES].segments[BP];
   //QuaternionSegment c5 = poses[(i+40)%NUM_OF_POSES].segments[BP];
 
-  
+
   //strokeWeight(9);
   //stroke(155, 170, 185, 90);
   //line(c1.x, c1.z, c1.y, c2.x, c2.z, c2.y);
@@ -149,8 +146,8 @@ void connector(int i, int BP) {
   ////strokeWeight(1);
   //stroke(161, 193, 187, 90);
   //line(c4.x, c4.z, c4.y, c5.x, c5.z, c5.y);
-  
-  
+
+
   //pushMatrix();
   //translate(c1.x, c1.z, c1.y);
   //noStroke();
