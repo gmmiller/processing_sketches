@@ -7,7 +7,7 @@ final int PORT = 9763;
 int TIME_INTERVAL = 1000*10; //in milliseconds
 int NUM_OF_POSES = 300;
 float ROTATION = 4; //what to rotate the camera by (starting slow)
-int CONS = 15; //number of connections to make 
+int CONS = 25; //number of connections to make 
 int STEP = NUM_OF_POSES/CONS; //distance between poses to draw
 int lastTime = -10;
 int pose_num = 0;
@@ -53,7 +53,7 @@ void setup() {
 void draw() {
 
   //background(73, 89, 103);
-  background(12);
+  background(226, 200, 143, 50);
   lights();
   pushMatrix();
   //fill(0, 50);
@@ -73,8 +73,7 @@ void draw() {
     poses[pose_num] = server.pose;
     pose_num = (pose_num + 1) % NUM_OF_POSES;
 
-    //attempt to rotate the camera around the x axis
-    camera(10, 4, 1, 0, 0, 0, 0, -1.0, 0);
+    camera(10, 12, 1, 0, 0, 0, 0, -1.0, 0);
     translate(0, 0, 0);
     //rotateX(radians(angle2));
     //drawCoordSys(2);
@@ -131,10 +130,17 @@ void connector(int i, int BP) {
     //line(c1.x, c1.z, c1.y, c2.x, c2.z, c2.y);
     pushMatrix();
     noStroke();
-    fill(25+(10*x), 150);
+    int a = 150;
     translate(c2.x, c2.z, c2.y);
     if (x%2 == 0) {
-      box( 0.01*(x-1));
+      if ( x%3 == 0) {
+        fill(45, 135, 109);
+      } else if (x %3 == 1) {
+        fill(186, 157, 99);
+      } else {
+        fill(157, 24, 19);
+      }
+      sphere( 0.01*(CONS-x));
     }
     popMatrix();
   }  
