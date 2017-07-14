@@ -5,9 +5,9 @@ import java.net.SocketException;
 
 final int PORT = 9763;
 int TIME_INTERVAL = 1000*10; //in milliseconds
-int NUM_OF_POSES = 100;
+int NUM_OF_POSES = 300;
 float ROTATION = 4; //what to rotate the camera by (starting slow)
-int CONS = 20; //number of connections to make 
+int CONS = 15; //number of connections to make 
 int STEP = NUM_OF_POSES/CONS; //distance between poses to draw
 int lastTime = -10;
 int pose_num = 0;
@@ -44,7 +44,7 @@ void setup() {
   catch(SocketException se) {
     se.printStackTrace();
   }
-  noStroke();
+  //noStroke();
 }
 
 
@@ -52,11 +52,12 @@ void setup() {
 
 void draw() {
 
-  background(73, 89, 103);
+  //background(73, 89, 103);
+  background(12);
   lights();
   pushMatrix();
   //fill(0, 50);
-  noStroke();
+  //noStroke();
   translate(-6, -5, 0);
   rotateY(radians(45));
   //rect is not all the way correctly allighned don't worry about it
@@ -73,7 +74,7 @@ void draw() {
     pose_num = (pose_num + 1) % NUM_OF_POSES;
 
     //attempt to rotate the camera around the x axis
-    camera(8, 5.33, 1, 0, 0, 0, 0, -1.0, 0);
+    camera(10, 4, 1, 0, 0, 0, 0, -1.0, 0);
     translate(0, 0, 0);
     //rotateX(radians(angle2));
     //drawCoordSys(2);
@@ -86,30 +87,32 @@ void draw() {
 
       //back etc.
       connector(current, Body.HEAD);
-      //connector(current, Body.L5);
-      ////connector(current, Body.L3);
-      //connector(current, Body.T12);
-      ////connector(current, Body.T8);
-      ////connector(current, Body.NECK);
-      //connector(current, Body.PELVIS);
+      connector(current, Body.L5);
+      //connector(current, Body.L3);
+      connector(current, Body.T12);
+      //connector(current, Body.T8);
+      //connector(current, Body.NECK);
+      connector(current, Body.PELVIS);
       //right arm
-
-      //connector(current, Body.RIGHT_HAND);
+      connector(current, Body.RIGHT_SHOULDER);
+      connector(current, Body.RIGHT_UPPER_ARM);
+      connector(current, Body.RIGHT_FORE_ARM);
+      connector(current, Body.RIGHT_HAND);
       //left arm
-      //connector(current, Body.LEFT_SHOULDER);
-      //connector(current, Body.LEFT_UPPER_ARM);
-      //connector(current, Body.LEFT_FORE_ARM);
-      //connector(current, Body.LEFT_HAND);
+      connector(current, Body.LEFT_SHOULDER);
+      connector(current, Body.LEFT_UPPER_ARM);
+      connector(current, Body.LEFT_FORE_ARM);
+      connector(current, Body.LEFT_HAND);
       //right leg
 
-      //connector(current, Body.RIGHT_UPPER_LEG);
-      //connector(current, Body.RIGHT_LOWER_LEG);
-      //connector(current, Body.RIGHT_FOOT);
+      connector(current, Body.RIGHT_UPPER_LEG);
+      connector(current, Body.RIGHT_LOWER_LEG);
+      connector(current, Body.RIGHT_FOOT);
       //connector(current, Body.RIGHT_TOE);
       //left leg
-      //connector(current, Body.LEFT_UPPER_LEG);
-      //connector(current, Body.LEFT_LOWER_LEG);
-      //connector(current, Body.LEFT_FOOT);
+      connector(current, Body.LEFT_UPPER_LEG);
+      connector(current, Body.LEFT_LOWER_LEG);
+      connector(current, Body.LEFT_FOOT);
       //connector(current, Body.LEFT_TOE);
     }
   }
@@ -123,9 +126,17 @@ void connector(int i, int BP) {
     QuaternionSegment c1 = poses[(i+x)%NUM_OF_POSES].segments[BP];
     QuaternionSegment c2 = poses[(i+STEP*x)%NUM_OF_POSES].segments[BP];
 
-    stroke(161-(10*x), 193, 187+(3*x), 70);
-    strokeWeight(1);
-    line(c1.x, c1.z, c1.y, c2.x, c2.z, c2.y);
+    stroke(215-(10*x), 13, 200-(3*x), 90);
+    strokeWeight(CONS - x);
+    //line(c1.x, c1.z, c1.y, c2.x, c2.z, c2.y);
+    pushMatrix();
+    noStroke();
+    fill(25+(10*x), 150);
+    translate(c2.x, c2.z, c2.y);
+    if (x%2 == 0) {
+      box( 0.01*(x-1));
+    }
+    popMatrix();
   }  
   //QuaternionSegment c1 = poses[i].segments[BP]; 
   //QuaternionSegment c2 = poses[((i+10)%NUM_OF_POSES)].segments[BP];
@@ -262,7 +273,7 @@ void drawStick(MocapPose pose) {
 
 
   //draw the lines
-  stroke(230, 192, 240, 50);
+  stroke(230, 192, 240, 20);
   strokeWeight(10);
   //draw shoulders
   drawConnection(pose, Body.RIGHT_SHOULDER, Body.LEFT_SHOULDER);
