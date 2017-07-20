@@ -57,9 +57,9 @@ void setup() {
 void draw() {
   int time = millis();
   background(13, 30, 47+time%20,12); 
-  //lights();
-  ambientLight(3,44,76);
-  directionalLight(255,255,255,10,15,0);
+  lights();
+  //ambientLight(3,44,76);
+  //directionalLight(255,255,255,10,15,0);
   
   
 
@@ -99,7 +99,7 @@ void draw() {
 
 void drawRotatedFigure(MocapPose incomingPose) {
   //draws the current pose rotated around the head by 360 degrees
-  for (float angle = 0; angle < TWO_PI; angle += 0.2) {
+  for (float angle = 0; angle < TWO_PI; angle += 0.5) {
     QuaternionSegment head = incomingPose.segments[Body.HEAD];
     pushMatrix();
     translate(head.x, head.z, head.y);
@@ -128,7 +128,11 @@ void drawConnection(MocapPose pose, int point1, int point2) {
   //println(point1, point2);
   QuaternionSegment segment1 = pose.segments[point1];
   QuaternionSegment segment2 = pose.segments[point2];
-  line(segment1.x, segment1.z, segment1.y, segment2.x, segment2.z, segment2.y);
+  //line(segment1.x, segment1.z, segment1.y, segment2.x, segment2.z, segment2.y);
+  pushMatrix();
+  translate(segment1.x, segment1.z, segment1.y);
+  sphere(0.05);
+  popMatrix();
 }
 
 void drawStick(MocapPose pose) {
