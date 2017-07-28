@@ -1,5 +1,6 @@
 //Gigi Miller
 //Vines between two pts
+import java.util.Calendar;
 
 Person p1 = new Person();
 Person p2 = new Person();
@@ -7,6 +8,7 @@ Person p2 = new Person();
 void setup() {
   size(displayWidth, displayHeight);
   background(0);
+  frameRate(90);
 }
 
 void draw() {
@@ -41,4 +43,12 @@ class Person {
     //fill(200, 27);
     //ellipse(xpos, ypos, r, r );
   }
+}
+
+void keyReleased() {
+  if (key=='s' || key=='S') saveFrame(timestamp()+".png");
+}
+
+String timestamp() {
+  return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", Calendar.getInstance());
 }

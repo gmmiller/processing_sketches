@@ -2,6 +2,8 @@
 //One Hundred Circle Intersections
 //Attempt One
 
+import java.util.Calendar;
+
 //number of circles
 Agent[] circles = new Agent[100];
 
@@ -32,4 +34,12 @@ void draw(){
   }
   
  
+}
+
+void keyReleased() {
+  if (key=='p' || key=='P') saveFrame(timestamp()+".png");
+}
+
+String timestamp() {
+  return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", Calendar.getInstance());
 }

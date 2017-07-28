@@ -1,5 +1,5 @@
 import java.net.SocketException;
-
+import java.util.Calendar;
 
 final int PORT = 9763;
 int TIME_INTERVAL = 1000*10;
@@ -213,6 +213,10 @@ void drawBalls(MocapPose pose) {
   }
 }
 
-void keyPressed() {
-  redraw();
+void keyReleased() {
+  if (key=='s' || key=='S') saveFrame(timestamp()+".png");
+}
+
+String timestamp() {
+  return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", Calendar.getInstance());
 }

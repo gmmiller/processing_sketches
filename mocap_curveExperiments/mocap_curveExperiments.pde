@@ -1,4 +1,5 @@
 import java.net.SocketException;
+import java.util.Calendar;
 
 //to be used with the xsens video walking in a spiral with arm flapping for best results...
 
@@ -53,7 +54,8 @@ void setup() {
 void draw() {
 
   //background(73, 89, 103);
-  background(226, 200, 143, 50);
+  //background(226, 200, 143, 50);
+  background(105, 174, 206);
   lights();
   pushMatrix();
   //fill(0, 50);
@@ -73,7 +75,7 @@ void draw() {
     poses[pose_num] = server.pose;
     pose_num = (pose_num + 1) % NUM_OF_POSES;
 
-    camera(10, 12, 1, 0, 0, 0, 0, -1.0, 0);
+    camera(10, 10, 1, 0, 0, 0, 0, -1.0, 0);
     translate(0, 0, 0);
     //rotateX(radians(angle2));
     //drawCoordSys(2);
@@ -132,58 +134,61 @@ void connector(int i, int BP) {
     noStroke();
     int a = 150;
     translate(c2.x, c2.z, c2.y);
-    if (x%2 == 0) {
-      if ( x%3 == 0) {
-        fill(45, 135, 109);
-      } else if (x %3 == 1) {
-        fill(186, 157, 99);
-      } else {
-        fill(157, 24, 19);
-      }
-      sphere( 0.01*(CONS-x));
-    }
+    //if (x%2 == 0) {
+    //  if ( x%3 == 0) {
+    //    fill(45, 135, 109);
+    //  } else if (x %3 == 1) {
+    //    fill(186, 157, 99,25);
+    //  } else {
+    //    fill(157, 24, 19,25);
+    //  }
+    fill(247, 204, 49, 75);
+    //sphere( 0.01*(CONS-x));
+    box(0.01*(CONS-x));
+
     popMatrix();
-  }  
-  //QuaternionSegment c1 = poses[i].segments[BP]; 
-  //QuaternionSegment c2 = poses[((i+10)%NUM_OF_POSES)].segments[BP];
-  //QuaternionSegment c3 = poses[((i+20)%NUM_OF_POSES)].segments[BP];
-  //QuaternionSegment c4 = poses[(i+30)%NUM_OF_POSES].segments[BP];
-  //QuaternionSegment c5 = poses[(i+40)%NUM_OF_POSES].segments[BP];
-
-
-  //strokeWeight(9);
-  //stroke(155, 170, 185, 90);
-  //line(c1.x, c1.z, c1.y, c2.x, c2.z, c2.y);
-
-  //stroke(237, 115, 101, 90);
-  //line(c2.x, c2.z, c2.y, c3.x, c3.z, c3.y);
-  ////strokeWeight(1);
-  //stroke(241, 197, 112, 90);
-  //line(c3.x, c3.z, c3.y, c4.x, c4.z, c4.y);
-  ////strokeWeight(1);
-  //stroke(161, 193, 187, 90);
-  //line(c4.x, c4.z, c4.y, c5.x, c5.z, c5.y);
-
-
-  //pushMatrix();
-  //translate(c1.x, c1.z, c1.y);
-  //noStroke();
-  //fill(155, 170, 185, 90);
-  //sphere(0.065);
-  //popMatrix();
-  // pushMatrix();
-  //translate(c2.x, c2.z, c2.y);
-  //noStroke();
-  //fill(237, 115, 101,90);
-  //sphere(0.025);
-  //popMatrix();
-  // pushMatrix();
-  //translate(c3.x, c3.z, c3.y);
-  //noStroke();
-  //fill(241, 197, 112, 90);
-  //sphere(0.035);
-  //popMatrix();
+  }
 }
+//QuaternionSegment c1 = poses[i].segments[BP]; 
+//QuaternionSegment c2 = poses[((i+10)%NUM_OF_POSES)].segments[BP];
+//QuaternionSegment c3 = poses[((i+20)%NUM_OF_POSES)].segments[BP];
+//QuaternionSegment c4 = poses[(i+30)%NUM_OF_POSES].segments[BP];
+//QuaternionSegment c5 = poses[(i+40)%NUM_OF_POSES].segments[BP];
+
+
+//strokeWeight(9);
+//stroke(155, 170, 185, 90);
+//line(c1.x, c1.z, c1.y, c2.x, c2.z, c2.y);
+
+//stroke(237, 115, 101, 90);
+//line(c2.x, c2.z, c2.y, c3.x, c3.z, c3.y);
+////strokeWeight(1);
+//stroke(241, 197, 112, 90);
+//line(c3.x, c3.z, c3.y, c4.x, c4.z, c4.y);
+////strokeWeight(1);
+//stroke(161, 193, 187, 90);
+//line(c4.x, c4.z, c4.y, c5.x, c5.z, c5.y);
+
+
+//pushMatrix();
+//translate(c1.x, c1.z, c1.y);
+//noStroke();
+//fill(155, 170, 185, 90);
+//sphere(0.065);
+//popMatrix();
+// pushMatrix();
+//translate(c2.x, c2.z, c2.y);
+//noStroke();
+//fill(237, 115, 101,90);
+//sphere(0.025);
+//popMatrix();
+// pushMatrix();
+//translate(c3.x, c3.z, c3.y);
+//noStroke();
+//fill(241, 197, 112, 90);
+//sphere(0.035);
+//popMatrix();
+
 
 
 void drawCoordSys(float len) {
@@ -315,4 +320,11 @@ void drawStick(MocapPose pose) {
   drawConnection(pose, Body.RIGHT_UPPER_LEG, Body.RIGHT_LOWER_LEG);
   drawConnection(pose, Body.RIGHT_LOWER_LEG, Body.RIGHT_FOOT);
   //drawConnection(pose, Body.RIGHT_FOOT, Body.RIGHT_TOE);
+}
+void keyReleased() {
+  if (key=='s' || key=='S') saveFrame(timestamp()+".png");
+}
+
+String timestamp() {
+  return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", Calendar.getInstance());
 }

@@ -1,6 +1,6 @@
 //Gigi Miller
 //Fractal Art
-
+import java.util.Calendar;
 int NUM_LEVELS = 3;
 int NUM_CHILDREN= 3;
 int MAX_LEVELS = 7;
@@ -86,4 +86,12 @@ class Branch {
       children[i].drawMe();
     }
   }
+}
+
+void keyReleased() {
+  if (key=='s' || key=='S') saveFrame(timestamp()+".png");
+}
+
+String timestamp() {
+  return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", Calendar.getInstance());
 }

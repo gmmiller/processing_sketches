@@ -3,6 +3,8 @@
 //June 21st 2017
 //stylized shell
 
+import java.util.Calendar;
+
 float iter = 400;
 
 void setup() {
@@ -23,4 +25,12 @@ void draw() {
     iter -= 13;
     rotate(PI/6);
   }
+}
+
+void keyReleased() {
+  if (key=='s' || key=='S') saveFrame(timestamp()+".png");
+}
+
+String timestamp() {
+  return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", Calendar.getInstance());
 }
