@@ -1,7 +1,7 @@
 //gigi miller and maya reich
 //evolving a pool of images
 
-//take one - circles only 
+//take two - adding complexity 
 
 //Global Constants
 int POP = 25; 
