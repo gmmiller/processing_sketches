@@ -1,4 +1,4 @@
-//goats are the individual images we are creating
+//goats are the individual images we are creating //<>//
 //greatest of all time
 
 //Chromosome positions
@@ -16,6 +16,7 @@ int ALPH = 3;
 int EX = 4;
 int WHY = 5;
 int RAD = 6;
+
 int chromLength = HEADER_LENGTH + (SHAPE_LENGTH * MAX_SHAPES);
 
 int degrees = 360;
@@ -24,10 +25,14 @@ int brightMax = 100;
 int alphaMax = 100;
 int maxRad = 50;
 
+int currentGoat = 0 ;
+
 class Goat {
+  int id;
+  ArrayList<Goat> neighbors = new ArrayList<Goat>(); //list of neighbors to breed from 
   int x, y; //location of each goat in the grid
   float FS; //fitness score out of 1 max
-  
+
   float[] chromosome = new float[chromLength];
   //r, b, g, # of ellipses, 
   //each ellipse has - r, g, b, a, x, y, r (7)
@@ -41,32 +46,43 @@ class Goat {
   }
 
 
-  void drawGoat() {
-
+  void drawGoat(Goat goat, float t) {
+    //println("drawing");
     PGraphics image; 
-    image = createGraphics(200, 200);
+    image = createGraphics(widthOfGoat, heightOfGoat);
 
     image.beginDraw();
     image.colorMode(HSB, degrees, satMax, brightMax, alphaMax);
     image.noStroke();
     //gets the background RGB values from the goats chromosome
-    float bgH = chromosome[BG_HUE] * degrees;
-    float bgS = chromosome[BG_SAT] * satMax;
-    float bgB = chromosome[BG_BRI] * brightMax;
+    float bgH = chromeLerp(goat, t, BG_HUE) * degrees;
+    float bgS = chromeLerp(goat, t, BG_SAT) * satMax;
+    float bgB = chromeLerp(goat, t, BG_BRI) * brightMax;
     image.background(bgH, bgS, bgB);
     //draws the background of each goat
 
     //draw the ellipses
-    int num_Ell =int( chromosome[NUM_SHAPE] * MAX_SHAPES);
+    int ogNumEll = int (chromosome[NUM_SHAPE] * MAX_SHAPES);
+    int newNumEll = int(goat.chromosome[NUM_SHAPE] * MAX_SHAPES);
+    int num_Ell = max(ogNumEll, newNumEll);
     //iterates through the number of ellipses in the goat 
     for (int i = 0; i < num_Ell; i++) {
-      float eH = chromosome[HEADER_LENGTH + (i*SHAPE_LENGTH) + HUE] * degrees;
-      float eS = chromosome[HEADER_LENGTH + (i*SHAPE_LENGTH) + SAT] * (satMax + 50); //skews circles to be more saturated
-      float eB = chromosome[HEADER_LENGTH + (i*SHAPE_LENGTH) + BRI] * (brightMax + 100); //skews circles to be brighter
-      float eA = chromosome[HEADER_LENGTH + (i*SHAPE_LENGTH) + ALPH] * alphaMax;
-      float eX = chromosome[HEADER_LENGTH + (i*SHAPE_LENGTH) + EX] * widthOfGoat;
-      float eY = chromosome[HEADER_LENGTH + (i*SHAPE_LENGTH) + WHY] * heightOfGoat;
-      float eRad = chromosome[HEADER_LENGTH + (i*SHAPE_LENGTH) + RAD] * maxRad;
+      float eH = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + HUE)  * degrees;
+      float eS = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + SAT) * (satMax + 50); //skews circles to be more saturated
+      float eB = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + BRI) * (brightMax + 100); //skews circles to be brighter
+      float eA = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + ALPH) * alphaMax;
+      float eX = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + EX) * widthOfGoat;
+      float eY = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + WHY) * heightOfGoat;
+      float eRad = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + RAD) * maxRad;
+
+      if (i >= ogNumEll ) {
+        eA = lerp(0, goat.chromosome[HEADER_LENGTH + (i*SHAPE_LENGTH) + ALPH], t) * alphaMax;
+        //println("fade in", i, chromosome[NUM_SHAPE], goat.chromosome[NUM_SHAPE] );
+      } else if (i >= newNumEll) {
+        eA = lerp(chromosome[HEADER_LENGTH + (i*SHAPE_LENGTH) + ALPH], 0, t) * alphaMax;
+        //println("fade out" , i , chromosome[NUM_SHAPE], goat.chromosome[NUM_SHAPE] );
+      }
+
       image.fill(eH, eS, eB, eA);
       image.ellipse(eX, eY, eRad, eRad);
     }
@@ -76,7 +92,9 @@ class Goat {
   }
 
 
-
+  float chromeLerp(Goat fgoat, float t, int i) {
+    return lerp(chromosome[i], fgoat.chromosome[i], t);
+  }
   //fitness test - color scheme and # of circles
   //complementary colors -- fitness function creates the breeding pool which is an array
   float getFitness() {
@@ -112,9 +130,44 @@ class Goat {
     return fitness;
   }
 
+  //breed the goats 
+  Goat breed() { 
+    //BP is only made of Goats in immediate location of given Goat
+    ArrayList<Goat> BP = new ArrayList<Goat>(); 
+    for (Goat g : neighbors) { 
+      //append the number of goats into the breeding pool based on the fitness score 
+      int breeders = int( g.getFitness() * 100); 
+      for (int i = 0; i < breeders; i++) { 
+        BP.add(g);
+      }
+    } 
+    Goat child = new Goat(); 
+    child.x = x; 
+    child.y = y; 
+    child.id = id;
+    child.neighbors = neighbors;
+    //println(id, BP.size());
+    //parent 1 index 
+    Goat p1 = BP.get(int (random(0, BP.size()))); 
+    //parent 2 index 
+    Goat p2 = BP.get(int (random(0, BP.size()))); 
 
+    //index at which we crossover genes from parent 1 to parent 2 
+    int crossOverPt = int(random(0, chromLength-1)); 
 
-
+    for (int i = 0; i < chromLength; i++) { 
+      //get new genes from parent 1 up to crossover 
+      if (i < crossOverPt) { 
+        child.chromosome[i] = p1.chromosome[i];
+      } 
+      //get new genes from parent 2 after crossover 
+      else { 
+        child.chromosome[i] = p2.chromosome[i];
+      }
+    } 
+    child.mutate();
+    return child;
+  } 
 
 
   //mutate all genes of the children by a small amount

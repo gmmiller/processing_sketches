@@ -127,14 +127,10 @@ void breed() {
         future[k].chromosome[i] = p2.chromosome[i];
       }
     } 
+    future[k].mutate();
+
     //float chanceSG = random(0, 5); //chance of there being a supergoat generated this breeding
     //if ( chanceSG <= 1) {
-    //  int nG = int (random(0, POP));
-    //  Goat superGoat = new Goat();
-    //  superGoat.birth();
-    //  future[nG] = superGoat;
-    //}
-    future[k].mutate();
   }
 } 
 
@@ -146,7 +142,10 @@ void keyPressed() {
   }
   if (key == 'b' || key == 'B') {
 
-  
+    int nG = int (random(0, POP));
+    //Goat superGoat = new Goat();
+    //superGoat.birth();
+    future[nG].birth();
   }
 }
 
