@@ -126,6 +126,7 @@ class Goat {
     float radiusScore  = 0;
     float colorFitScore = 0;
     float satScore = 0;
+    float nHueScore = 0; //total of all the neighbors hues
     //gets the background HSB values from the goats chromosome
     float bgH = chromosome[BG_HUE] * hue;
     //ideal complementary color
@@ -143,11 +144,20 @@ class Goat {
       radiusScore += radRatio;
       colorFitScore += ((1 - cos(bgComp - eH))/2)*radRatio;
     }
-    satScore = chromosome[BG_SAT]/satMax; 
+    
+    //iterate through all the neighbors and get their hue
+    for (Goat j : neighbors){
+     nHueScore += j.chromosome[BG_HUE];  
+    }
+    nHueScore = nHueScore/neighbors.size();
+    nHueScore = abs(nHueScore - chromosome[BG_HUE]);
+    
+    //standard deviation of the averages 
+    satScore = 1 - chromosome[BG_SAT]/satMax; 
     //updates the fitness score of the goat based on the color fit score and the number of ellipses
     //we favor complementary colors and more circles
     if (num_Ell > 0) {
-      fitness = (colorFitScore/num_Ell)*0.3 + (num_Ell/MAX_SHAPES)*0.3 + (radiusScore/num_Ell) * 0.2 + satScore * 0.2;
+      fitness = (colorFitScore/num_Ell) * 0.3 + (num_Ell/MAX_SHAPES)*0.2 + (radiusScore/num_Ell) * 0.2 + satScore * 0.2 + nHueScore * 0.5;
     } else {
       //if no ellipses, assign score of 0.1
       fitness = 0.1;
@@ -233,3 +243,9 @@ class Goat {
     }
   }
 }
+
+
+// IDEAS
+// color scheme
+// based on neighbors (kind of done with hue )
+// different shapes- lines to rectanagles or using our own shapes
