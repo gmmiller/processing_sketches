@@ -5,7 +5,7 @@
 
 
 //Global Constants
-int POP = 1344; 
+int POP = 9; 
 int count = 0;
 int steps = 20;
 PGraphics image;
@@ -16,11 +16,11 @@ Goat[] current = new Goat[POP];
 //future population we are interpolating to from current
 Goat[] future = new Goat[POP];
 
-int widthOfGoat = 50;
-int heightOfGoat = 50;
+int widthOfGoat = 200;
+int heightOfGoat = 200;
 
 void setup() {
-  size(2400, 1400);
+  size(600, 600);
   background(35);
   colorMode(HSB, 360, 100, 100);
   frameRate(40);
@@ -92,10 +92,7 @@ void initializePool() {
       //add the bottom center
       current[id].neighbors.add(current[id+1]);
     }
-  }
-  //breed the goats
-  for (int k = 0; k < POP; k++) {
-    future[k] = current[k].breed();
+    current[id].breed();
   }
 }
 
@@ -106,23 +103,9 @@ void draw() {
 
   //draw current population
   for (int i=0; i < POP; i++) {
-    current[i].drawGoat(future[i], count/float(steps));
+    current[i].drawGoat(count/float(steps));
   }
-
   count++;
-
-  //when fully interpolated to futurePop
-  if (count == steps) {
-    count = 0;
-    Goat tempGoats[] = current;
-    current = future;
-    future = tempGoats;
-
-    //breed the goats
-    for (int j = 0; j < POP; j++) {
-      future[j] = current[j].breed();
-    }
-  }
 }
 
 
@@ -137,7 +120,7 @@ void keyPressed() {
     int nG = int (random(0, POP));
     //Goat superGoat = new Goat();
     //superGoat.birth();
-    future[nG].birth();
+    current[nG].birth();
   }
 }
 

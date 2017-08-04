@@ -22,7 +22,7 @@ int degrees = 360;
 int satMax = 100;
 int brightMax = 100;
 int alphaMax = 100;
-int maxRad = 50;
+int maxRad = 20;
 
 class Goat {
   int x, y; //location of each goat in the grid

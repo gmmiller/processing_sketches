@@ -1,10 +1,21 @@
 //goats are the individual images we are creating //<>//
 //greatest of all time
 
+
+//things to change:
+//update breed- dont return anything
+//update draw to draw based on chromosomes
+//swap outside of breed. Order is swap then breed
+//dont create new goat- change chromosome
+//each goat has two chromosomes
+//get rid of future in main file
+//swap breed draw
+
+
 //Chromosome positions
 int HEADER_LENGTH = 4;
 int SHAPE_LENGTH = 7;
-int MAX_SHAPES = 5;
+int MAX_SHAPES = 10;
 int BG_HUE = 0; //header
 int BG_SAT = 1; //header
 int BG_BRI = 2; //header
@@ -23,7 +34,7 @@ int degrees = 360;
 int satMax = 100;
 int brightMax = 100;
 int alphaMax = 100;
-int maxRad = 50;
+int maxRad = 100;
 
 int currentGoat = 0 ;
 
@@ -34,6 +45,7 @@ class Goat {
   float FS; //fitness score out of 1 max
 
   float[] chromosome = new float[chromLength];
+  float[] Fchromosome = new float[chromLength]; //future chromosome 
   //r, b, g, # of ellipses, 
   //each ellipse has - r, g, b, a, x, y, r (7)
   //ten circles
@@ -46,8 +58,16 @@ class Goat {
   }
 
 
-  void drawGoat(Goat goat, float t) {
-    //println("drawing");
+  void drawGoat(float t) {
+    //only swap chromosomes if fully interpolated
+    if (count == steps) {
+      swap();
+      breed();
+      count = 0;
+    }
+
+
+
     PGraphics image; 
     image = createGraphics(widthOfGoat, heightOfGoat);
 
@@ -55,28 +75,28 @@ class Goat {
     image.colorMode(HSB, degrees, satMax, brightMax, alphaMax);
     image.noStroke();
     //gets the background RGB values from the goats chromosome
-    float bgH = chromeLerp(goat, t, BG_HUE) * degrees;
-    float bgS = chromeLerp(goat, t, BG_SAT) * satMax;
-    float bgB = chromeLerp(goat, t, BG_BRI) * brightMax;
+    float bgH = chromeLerp( t, BG_HUE) * degrees;
+    float bgS = chromeLerp( t, BG_SAT) * satMax;
+    float bgB = chromeLerp( t, BG_BRI) * brightMax;
     image.background(bgH, bgS, bgB);
     //draws the background of each goat
 
     //draw the ellipses
     int ogNumEll = int (chromosome[NUM_SHAPE] * MAX_SHAPES);
-    int newNumEll = int(goat.chromosome[NUM_SHAPE] * MAX_SHAPES);
+    int newNumEll = int(Fchromosome[NUM_SHAPE] * MAX_SHAPES);
     int num_Ell = max(ogNumEll, newNumEll);
     //iterates through the number of ellipses in the goat 
     for (int i = 0; i < num_Ell; i++) {
-      float eH = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + HUE)  * degrees;
-      float eS = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + SAT) * (satMax + 50); //skews circles to be more saturated
-      float eB = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + BRI) * (brightMax + 100); //skews circles to be brighter
-      float eA = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + ALPH) * alphaMax;
-      float eX = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + EX) * widthOfGoat;
-      float eY = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + WHY) * heightOfGoat;
-      float eRad = chromeLerp(goat, t, HEADER_LENGTH + (i*SHAPE_LENGTH) + RAD) * maxRad;
+      float eH = chromeLerp( t, HEADER_LENGTH + (i*SHAPE_LENGTH) + HUE)  * degrees;
+      float eS = chromeLerp( t, HEADER_LENGTH + (i*SHAPE_LENGTH) + SAT) * (satMax + 50); //skews circles to be more saturated
+      float eB = chromeLerp( t, HEADER_LENGTH + (i*SHAPE_LENGTH) + BRI) * (brightMax + 100); //skews circles to be brighter
+      float eA = chromeLerp( t, HEADER_LENGTH + (i*SHAPE_LENGTH) + ALPH) * alphaMax;
+      float eX = chromeLerp( t, HEADER_LENGTH + (i*SHAPE_LENGTH) + EX) * widthOfGoat;
+      float eY = chromeLerp( t, HEADER_LENGTH + (i*SHAPE_LENGTH) + WHY) * heightOfGoat;
+      float eRad = chromeLerp( t, HEADER_LENGTH + (i*SHAPE_LENGTH) + RAD) * maxRad;
 
       if (i >= ogNumEll ) {
-        eA = lerp(0, goat.chromosome[HEADER_LENGTH + (i*SHAPE_LENGTH) + ALPH], t) * alphaMax;
+        eA = lerp(0, Fchromosome[HEADER_LENGTH + (i*SHAPE_LENGTH) + ALPH], t) * alphaMax;
         //println("fade in", i, chromosome[NUM_SHAPE], goat.chromosome[NUM_SHAPE] );
       } else if (i >= newNumEll) {
         eA = lerp(chromosome[HEADER_LENGTH + (i*SHAPE_LENGTH) + ALPH], 0, t) * alphaMax;
@@ -91,10 +111,14 @@ class Goat {
     image(image, x, y);
   }
 
-
-  float chromeLerp(Goat fgoat, float t, int i) {
-    return lerp(chromosome[i], fgoat.chromosome[i], t);
+// lerps between the genes in the chromosome
+  float chromeLerp(float t, int i) {
+    return lerp(chromosome[i], Fchromosome[i], t);
   }
+  
+  
+  
+  
   //fitness test - color scheme and # of circles
   //complementary colors -- fitness function creates the breeding pool which is an array
   float getFitness() {
@@ -131,7 +155,7 @@ class Goat {
   }
 
   //breed the goats 
-  Goat breed() { 
+  void breed() { 
     //BP is only made of Goats in immediate location of given Goat
     ArrayList<Goat> BP = new ArrayList<Goat>(); 
     for (Goat g : neighbors) { 
@@ -141,12 +165,7 @@ class Goat {
         BP.add(g);
       }
     } 
-    Goat child = new Goat(); 
-    child.x = x; 
-    child.y = y; 
-    child.id = id;
-    child.neighbors = neighbors;
-    //println(id, BP.size());
+
     //parent 1 index 
     Goat p1 = BP.get(int (random(0, BP.size()))); 
     //parent 2 index 
@@ -158,24 +177,29 @@ class Goat {
     for (int i = 0; i < chromLength; i++) { 
       //get new genes from parent 1 up to crossover 
       if (i < crossOverPt) { 
-        child.chromosome[i] = p1.chromosome[i];
+        Fchromosome[i] = p1.chromosome[i];
       } 
       //get new genes from parent 2 after crossover 
       else { 
-        child.chromosome[i] = p2.chromosome[i];
+        Fchromosome[i] = p2.chromosome[i];
       }
     } 
-    child.mutate();
-    return child;
+    mutate();
   } 
 
+  //put the future chromosome in the current spot once interpolation is done
+  void swap() {
+    float tempChromo[] = chromosome;
+    chromosome = Fchromosome;
+    Fchromosome = tempChromo;
+  }
 
   //mutate all genes of the children by a small amount
   void mutate() {
     for (int i = 0; i < chromosome.length; i++) {
       float gene = chromosome[i];
       float mutation = random(-0.1, 0.1);
-      float rate = random(0, 1);
+      float rate = random(0, 2);
       if (rate < 1.0/chromosome.length) {
         //println(gene);
         gene += mutation;
